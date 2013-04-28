@@ -10,7 +10,6 @@ TVSorter.TemplatesGrid = function(config) {
 
     Ext.applyIf(config, {
         url: TVSorter.config.connector_url
-        //url: MODx.config.connectors_url+'element/template.php'
         ,baseParams: {
             action: 'template/getList'
         }
@@ -68,7 +67,7 @@ Ext.extend(TVSorter.TemplatesGrid, MODx.grid.Grid, {
             text: _('tvsorter.cmpitem_update')
             ,handler: function() {
                 var panel = Ext.getCmp('tvsorter-nav').panel;
-                panel.viewTVs(this.menu.record.id);
+                panel.viewTVs(this.menu.record);
             }
             ,scope: this
         });

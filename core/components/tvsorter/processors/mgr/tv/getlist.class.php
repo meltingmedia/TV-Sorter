@@ -4,15 +4,6 @@
 
 class ListTVs extends modProcessor
 {
-//    public function prepareQueryBeforeCount(xPDOQuery $c)
-//    {
-//        $c = parent::prepareQueryBeforeCount($c);
-//        $c->sortby('Category.category', 'ASC');
-//        $c->sortby('name', 'ASC');
-//
-//        return $c;
-//    }
-
     public function process()
     {
         if (!$this->modx->hasPermission(array('view_tv' => true,'view_template' => true))) {
@@ -50,7 +41,8 @@ class ListTVs extends modProcessor
         $tvList = $templateObj->getTemplateVarList(array(
             'Category.category' => 'ASC',
             'access' => 'ASC',
-            $sort => $dir
+            'tv_rank' => 'ASC',
+            'name' => 'ASC'
         ), $limit, $start, $conditions);
         $tvs = $tvList['collection'];
         $count = $tvList['total'];

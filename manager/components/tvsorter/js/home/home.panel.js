@@ -45,13 +45,15 @@ TVSorter.panel.Home = function(config) {
     TVSorter.panel.Home.superclass.constructor.call(this, config);
 };
 Ext.extend(TVSorter.panel.Home, MODx.Panel, {
-    viewTVs: function(template) {
+    viewTVs: function(rec) {
         var card = Ext.getCmp('tvsorter-nav');
         var layout = card.getLayout();
         card.add({
             xtype: 'modx-grid-template-tv'
             ,cls:'main-wrapper'
-            ,template: template
+            ,template: rec.id
+            ,templatename: rec.templatename
+            ,useLoadingMask:true
         });
 
         layout.setActiveItem(1);
@@ -60,6 +62,7 @@ Ext.extend(TVSorter.panel.Home, MODx.Panel, {
     ,viewHome: function() {
         var card = Ext.getCmp('tvsorter-nav');
         var layout = card.getLayout();
+        card.getComponent(0).refresh();
         layout.setActiveItem(0);
 
         card.remove(card.getComponent(1));
