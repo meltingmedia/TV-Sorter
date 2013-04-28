@@ -1,7 +1,5 @@
 <?php
 
-//require_once MODX_PROCESSORS_PATH . 'element/tv/getlist.class.php';
-
 class ListTVs extends modProcessor
 {
     public function process()
@@ -38,12 +36,17 @@ class ListTVs extends modProcessor
             $conditions['OR:caption:LIKE'] = '%'.$search.'%';
         }
         //$tvList = $templateObj->getTemplateVarList(array($sort => $dir), $limit, $start, $conditions);
-        $tvList = $templateObj->getTemplateVarList(array(
-            'Category.category' => 'ASC',
-            'access' => 'ASC',
-            'tv_rank' => 'ASC',
-            'name' => 'ASC'
-        ), $limit, $start, $conditions);
+        $tvList = $templateObj->getTemplateVarList(
+            array(
+                'Category.category' => 'ASC',
+                'access' => 'ASC',
+                'tv_rank' => 'ASC',
+                'name' => 'ASC',
+            ),
+            $limit,
+            $start,
+            $conditions
+        );
         $tvs = $tvList['collection'];
         $count = $tvList['total'];
 

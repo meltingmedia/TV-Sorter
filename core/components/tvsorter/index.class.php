@@ -17,7 +17,6 @@ abstract class TVSorterManagerController extends modManagerController
         $this->jsURL = $this->tvsorter->config['mgr_js_url'];
         $this->cssURL = $this->tvsorter->config['mgr_css_url'];
         $this->loadBase();
-        $this->loadRTE();
         parent::initialize();
     }
 
@@ -39,23 +38,6 @@ abstract class TVSorterManagerController extends modManagerController
     });
 </script>'
         );
-    }
-
-    /**
-     * Load RTE if enabled
-     *
-     * @return void
-     */
-    public function loadRTE()
-    {
-        if ($this->tvsorter->config['use_rte']) {
-            new meltingmedia\rte\Loader(
-                $this->modx,
-                array(
-                    'namespace' => $this->tvsorter->prefix,
-                )
-            );
-        }
     }
 
     /**

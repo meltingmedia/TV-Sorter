@@ -53,7 +53,7 @@ Ext.extend(TVSorter.panel.Home, MODx.Panel, {
             ,cls:'main-wrapper'
             ,template: rec.id
             ,templatename: rec.templatename
-            ,useLoadingMask:true
+            ,pageSize: 500
         });
 
         layout.setActiveItem(1);

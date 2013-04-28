@@ -23,10 +23,10 @@ TVSorter.TemplatesGrid = function(config) {
         ,pluralText: _('templates')
 
         ,columns: [{
-            header: _('tvsorter.name')
+            header: _('name')
             ,dataIndex: 'templatename'
         },{
-            header: _('tvsorter.description')
+            header: _('description')
             ,dataIndex: 'description'
         },{
             dataIndex: 'category_name'
@@ -64,7 +64,7 @@ Ext.extend(TVSorter.TemplatesGrid, MODx.grid.Grid, {
     getMenu: function() {
         var m = [];
         m.push({
-            text: _('tvsorter.cmpitem_update')
+            text: _('tvsorter.manage_tvs')
             ,handler: function() {
                 var panel = Ext.getCmp('tvsorter-nav').panel;
                 panel.viewTVs(this.menu.record);

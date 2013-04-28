@@ -15,17 +15,12 @@ MODx.grid.TemplateTV = function(config) {
         ,fixed: true
     });
     Ext.applyIf(config,{
-        title: _('template_assignedtv_tab')
-        ,id: 'modx-grid-template-tv'
-        //,url: MODx.config.connectors_url+'element/template/tv.php'
+        id: 'modx-grid-template-tv'
         ,url: TVSorter.config.connector_url
         ,fields: ['id','name','description','tv_rank','access','category_name','category']
         ,baseParams: {
             action: 'tv/getList'
             ,template: config.template
-        }
-        ,saveParams: {
-            template: config.template
         }
         ,paging: true
         ,plugins: tt
@@ -48,14 +43,12 @@ MODx.grid.TemplateTV = function(config) {
         ,columns: [{
             header: _('name')
             ,dataIndex: 'name'
-            ,editor: { xtype: 'textfield' ,allowBlank: false }
         },{
             header: _('category')
             ,dataIndex: 'category_name'
         },{
             header: _('description')
             ,dataIndex: 'description'
-            ,editor: { xtype: 'textfield' }
         },tt,{
             header: _('rank')
             ,dataIndex: 'tv_rank'
@@ -69,7 +62,7 @@ MODx.grid.TemplateTV = function(config) {
                 var panel = Ext.getCmp('tvsorter-nav').panel;
                 panel.viewHome();
             }
-        },{
+        },'-',{
             text: _('save')
             ,handler: this.save
             ,scope: this
@@ -127,139 +120,10 @@ MODx.grid.TemplateTV = function(config) {
         });
     };
     MODx.grid.TemplateTV.superclass.constructor.call(this, config);
-
-    this.on('afteredit', function(e) {
-        if (e.field == 'access') {
-            var store = e.grid.getStore();
-            var total = store.queryBy(function(rec, id) {
-                if (rec.data['category_name'] == e.record.data['category_name']) {
-                    return true;
-                }
-                return false;
-            });
-            var actives = store.queryBy(function(rec, id) {
-                if (rec.data.tv_rank != '-' && rec.data.category_name == e.record.data['category_name']) return true;
-                return false;
-            });
-            var inactives = store.queryBy(function(rec, id) {
-                if (rec.data.tv_rank == '-' && rec.data.category_name == e.record.data['category_name']) return true;
-                return false;
-            });
-            var currentIdx = store.indexOf(e.record);
-
-            if (e.value === true) {
-                if (actives.length > 0) {
-                    var last = actives.last();
-                    var to = store.indexOf(last);
-                } else if (total.length > 1) {
-                    last = total.last();
-                    to = store.indexOf(last);
-                }
-
-                e.record.set('tv_rank', actives.length);
-
-                if (to && to != currentIdx) {
-                    store.removeAt(currentIdx);
-                    store.insert(to, e.record);
-                }
-            } else {
-                if (inactives.length > 0) {
-                    last = inactives.last();
-                    to = store.indexOf(last) + 1;
-                } else if (total.length > 0) {
-                    var first = total.first();
-                    to = store.indexOf(first);
-                }
-                var rank = e.record.get('tv_rank');
-                e.record.set('tv_rank', '-');
-
-                // Lower the tv_rank for impacted TVs
-                var impacted = store.queryBy(function(rec, id) {
-                    if (rec.data.tv_rank > rank && rec.data.category_name == e.record.data['category_name']) return true;
-                    return false;
-                });
-                impacted.each(function(rec, idx, list) {
-                    rec.set('tv_rank', (rec.get('tv_rank') - 1));
-                });
-
-                if (to && to != currentIdx) {
-                    store.removeAt(currentIdx);
-                    store.insert(to, e.record);
-                }
-            }
-        }
-    }, this);
+    this.on('render', this.prepareDrop, this);
+    this.on('afteredit', this.manageAccess, this);
 
 
-    this.on('render', function(grid) {
-        this.dropTarget = new Ext.dd.DropTarget(grid.getView().mainBody, {
-            ddGroup: 'tvDragSort'
-            ,copy: false
-            ,notifyOver: function(dragSource, e, data) {
-                if (dragSource.getDragData(e)) {
-                    var targetNode = dragSource.getDragData(e).selections[0]
-                        ,sourceNode = data.selections[0];
-
-                    if ((sourceNode.data['category_name'] != targetNode.data['category_name']) || !sourceNode.data['access'] || !targetNode.data['access'] || (sourceNode.data['id'] == targetNode.data['id'])) {
-                        return this.dropNotAllowed;
-                    }
-
-                    return this.dropAllowed;
-                }
-
-                return this.dropNotAllowed;
-            }
-            ,notifyDrop: function(dragSource, e, data) {
-                var sm = grid.getSelectionModel()
-                    ,rows = sm.getSelections();
-
-                if (dragSource.getDragData(e)) {
-                    var targetNode = dragSource.getDragData(e).selections[0]
-                        ,sourceNode = data.selections[0];
-
-                    if ((targetNode.id != sourceNode.id) && (targetNode.data['category_name'] === sourceNode.data['category_name'])) {
-                        var from = sourceNode.get('tv_rank');
-                        var to = targetNode.get('tv_rank');
-                        var store = grid.getStore();
-                        var sourceIdx = store.indexOf(sourceNode);
-                        var targetIdx = store.indexOf(targetNode);
-
-                        store.removeAt(sourceIdx);
-                        store.insert(targetIdx, sourceNode);
-
-                        var lower = store.queryBy(function(rec, id) {
-                            if (rec.data.tv_rank > from &&
-                                rec.data.tv_rank <= to &&
-                                rec.data.category_name == sourceNode.data['category_name']
-                                ) {
-                                return true;
-                            }
-                            return false;
-                        });
-                        lower.each(function(rec, idx, list) {
-                            rec.set('tv_rank', (rec.get('tv_rank') - 1));
-                        });
-
-                        var higher = store.queryBy(function(rec, id) {
-                            if (rec.data.tv_rank < from &&
-                                rec.data.tv_rank >= to &&
-                                rec.data.tv_rank != '-' &&
-                                rec.data.category_name == sourceNode.data['category_name']
-                                ) {
-                                return true;
-                            }
-                            return false;
-                        });
-                        higher.each(function(rec, idx, list) {
-                            rec.set('tv_rank', (~~(rec.get('tv_rank')) + 1));
-                        });
-
-                        sourceNode.set('tv_rank', to);
-                    }
-                }
-            }
-        });
-    }, this);
 };
 Ext.extend(MODx.grid.TemplateTV, MODx.grid.Grid, {
 
@@ -286,6 +150,152 @@ Ext.extend(MODx.grid.TemplateTV, MODx.grid.Grid, {
         this.refresh();
     }
 
+
+    /**
+     * Prepare the drop zone
+     */
+    ,prepareDrop: function(grid) {
+        this.dropTarget = new Ext.dd.DropTarget(grid.getView().mainBody, {
+            ddGroup: 'tvDragSort'
+            ,copy: false
+            ,notifyOver: function(dragSource, e, data) {
+                if (dragSource.getDragData(e)) {
+                    var targetNode = dragSource.getDragData(e).selections[0]
+                        ,sourceNode = data.selections[0];
+
+                    if ((sourceNode.data['category_name'] != targetNode.data['category_name']) ||
+                        !sourceNode.data['access'] ||
+                        !targetNode.data['access'] ||
+                        (sourceNode.data['id'] == targetNode.data['id'])
+                        ) {
+                        return this.dropNotAllowed;
+                    }
+
+                    return this.dropAllowed;
+                }
+
+                return this.dropNotAllowed;
+            }
+            ,notifyDrop: function(dragSource, e, data) {
+                if (dragSource.getDragData(e)) {
+                    var targetNode = dragSource.getDragData(e).selections[0]
+                        ,sourceNode = data.selections[0];
+
+                    if ((targetNode.id != sourceNode.id) &&
+                        (targetNode.get('category_name') === sourceNode.get('category_name')) &&
+                        sourceNode.get('access')
+                    ) {
+                        grid.sortTVs(sourceNode, targetNode);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * Take care of TVs attached/removed to the template
+     */
+    ,manageAccess: function(e) {
+        if (e.field != 'access') return false;
+
+        var store = e.grid.getStore();
+        var record = e.record;
+        var total = store.queryBy(function(rec, id) {
+            return (rec.get('category_name') == record.get('category_name'));
+        });
+        var actives = store.queryBy(function(rec, id) {
+            return (rec.get('tv_rank') != '-' && rec.get('category_name') == record.get('category_name'));
+        });
+        var inactives = store.queryBy(function(rec, id) {
+            return (rec.get('tv_rank') == '-' && rec.get('category_name') == record.get('category_name'));
+        });
+        var currentIdx = store.indexOf(record);
+
+        if (e.value === true) {
+            // Record has been attached
+            if (actives.length > 0) {
+                var last = actives.last();
+                var to = store.indexOf(last);
+            } else if (total.length > 1) {
+                last = total.last();
+                to = store.indexOf(last);
+            }
+            record.set('tv_rank', actives.length);
+        } else {
+            // Record has been removed
+            if (inactives.length > 0) {
+                last = inactives.last();
+                to = store.indexOf(last) + 1;
+            } else if (total.length > 0) {
+                var first = total.first();
+                to = store.indexOf(first);
+            }
+            var rank = record.get('tv_rank');
+            record.set('tv_rank', '-');
+
+            // Decrement the tv_rank for impacted TVs
+            var impacted = store.queryBy(function(rec, id) {
+                return (rec.get('tv_rank') > rank && rec.get('category_name') == record.get('category_name'));
+            });
+            impacted.each(function(rec, idx, list) {
+                rec.set('tv_rank', (rec.get('tv_rank') - 1));
+            });
+        }
+
+        if (to && to != currentIdx) {
+            store.removeAt(currentIdx);
+            store.insert(to, record);
+        }
+    }
+
+    /**
+     * Sort the selected TV
+     */
+    ,sortTVs: function(sourceNode, targetNode) {
+        var from = sourceNode.get('tv_rank');
+        var to = targetNode.get('tv_rank');
+        var store = this.getStore();
+        var sourceIdx = store.indexOf(sourceNode);
+        var targetIdx = store.indexOf(targetNode);
+
+        // Insert the selection to the target (and remove original selection)
+        store.removeAt(sourceIdx);
+        store.insert(targetIdx, sourceNode);
+
+        // Modify tv_rank for the impacted records
+        var lower = store.queryBy(function(rec, id) {
+            if (rec.data.tv_rank > from &&
+                rec.data.tv_rank <= to &&
+                rec.data.category_name == sourceNode.data['category_name']
+            ) {
+                return true;
+            }
+            return false;
+        });
+        lower.each(function(rec, idx, list) {
+            rec.set('tv_rank', (rec.get('tv_rank') - 1));
+        });
+
+        var higher = store.queryBy(function(rec, id) {
+            if (rec.data.tv_rank < from &&
+                rec.data.tv_rank >= to &&
+                rec.data.tv_rank != '-' &&
+                rec.data.category_name == sourceNode.data['category_name']
+            ) {
+                return true;
+            }
+            return false;
+        });
+        higher.each(function(rec, idx, list) {
+            rec.set('tv_rank', (~~(rec.get('tv_rank')) + 1));
+        });
+
+        sourceNode.set('tv_rank', to);
+    }
+
+    /**
+     * Save the modified grid data
+     */
     ,save: function() {
         var params = {
             tvs: this.encodeModified()
@@ -325,6 +335,7 @@ Ext.extend(MODx.grid.TemplateTV, MODx.grid.Grid, {
 
 });
 Ext.reg('modx-grid-template-tv',MODx.grid.TemplateTV);
+
 
 // Override to add required parameters/objects to "fireEvent"
 Ext.ns('Ext.ux.grid');
