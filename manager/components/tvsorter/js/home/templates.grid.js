@@ -20,23 +20,23 @@ TVSorter.TemplatesGrid = function(config) {
 
         ,grouping: true
         ,groupBy: 'category_name'
+        ,singleText: _('template')
+        ,pluralText: _('templates')
 
         ,columns: [{
             header: _('tvsorter.name')
             ,dataIndex: 'templatename'
-            ,sortable: true
         },{
             header: _('tvsorter.description')
             ,dataIndex: 'description'
-            ,sortable: false
         },{
-            header: _('tvsorter.description')
-            ,dataIndex: 'category_name'
-            ,sortable: false
+            dataIndex: 'category_name'
         },{
-            header: _('tvsorter.description')
+            header: _('template_assignedtv_tab')
             ,dataIndex: 'total_tvs'
-            ,sortable: false
+            ,fixed: true
+            ,width: 250
+            ,align: 'center'
         }]
     });
 
@@ -66,7 +66,10 @@ Ext.extend(TVSorter.TemplatesGrid, MODx.grid.Grid, {
         var m = [];
         m.push({
             text: _('tvsorter.cmpitem_update')
-            ,handler: this.updateCmpItem
+            ,handler: function() {
+                console.log('todo')
+            }
+            ,scope: this
         });
         return m;
     }
