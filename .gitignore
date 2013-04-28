@@ -1,0 +1,6 @@
+_build/build.config.php
+core/components/tvsorter/composer.lock
+core/components/tvsorter/composer.phar
+core/components/tvsorter/vendor/
+config.core.php
+.idea
