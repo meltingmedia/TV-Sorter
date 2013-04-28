@@ -67,7 +67,8 @@ Ext.extend(TVSorter.TemplatesGrid, MODx.grid.Grid, {
         m.push({
             text: _('tvsorter.cmpitem_update')
             ,handler: function() {
-                console.log('todo')
+                var panel = Ext.getCmp('tvsorter-nav').panel;
+                panel.viewTVs(this.menu.record.id);
             }
             ,scope: this
         });

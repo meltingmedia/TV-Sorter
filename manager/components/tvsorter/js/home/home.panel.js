@@ -27,19 +27,42 @@ TVSorter.panel.Home = function(config) {
                 html: _('tvsorter.management_desc')
                 ,border: false
                 ,bodyCssClass: 'panel-desc'
-            }/*,{
-                xtype: 'tvsorter-grid-templates'
-                ,cls: 'main-wrapper'
-                ,preventRender: true
-            }*/,{
-                xtype: 'modx-grid-template-tv'
-                ,cls:'main-wrapper'
-                ,preventRender: true
-                ,template: 1
+            },{
+                xtype: 'panel'
+                ,layout: 'card'
+                ,activeItem: 0
+                ,id: 'tvsorter-nav'
+                ,panel: this
+                ,unstyled: true
+                ,items: [{
+                     xtype: 'tvsorter-grid-templates'
+                     ,cls: 'main-wrapper'
+                    ,preventRender: true
+                 }]
             }]
         }]
     });
     TVSorter.panel.Home.superclass.constructor.call(this, config);
 };
-Ext.extend(TVSorter.panel.Home, MODx.Panel, {});
+Ext.extend(TVSorter.panel.Home, MODx.Panel, {
+    viewTVs: function(template) {
+        var card = Ext.getCmp('tvsorter-nav');
+        var layout = card.getLayout();
+        card.add({
+            xtype: 'modx-grid-template-tv'
+            ,cls:'main-wrapper'
+            ,template: template
+        });
+
+        layout.setActiveItem(1);
+    }
+
+    ,viewHome: function() {
+        var card = Ext.getCmp('tvsorter-nav');
+        var layout = card.getLayout();
+        layout.setActiveItem(0);
+
+        card.remove(card.getComponent(1));
+    }
+});
 Ext.reg('tvsorter-panel-home', TVSorter.panel.Home);

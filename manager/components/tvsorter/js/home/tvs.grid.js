@@ -11,8 +11,8 @@ MODx.grid.TemplateTV = function(config) {
     var tt = new Ext.ux.grid.CheckColumn({
         header: _('access')
         ,dataIndex: 'access'
-        ,width: 70
-        ,sortable: false
+        ,width: 120
+        ,fixed: true
     });
     Ext.applyIf(config,{
         title: _('template_assignedtv_tab')
@@ -60,28 +60,31 @@ MODx.grid.TemplateTV = function(config) {
         ,columns: [{
             header: _('name')
             ,dataIndex: 'name'
-            ,width: 150
             ,editor: { xtype: 'textfield' ,allowBlank: false }
-            ,sortable: true
         },{
             header: _('category')
             ,dataIndex: 'category_name'
-            ,width: 150
-            ,sortable: true
         },{
             header: _('description')
             ,dataIndex: 'description'
             ,width: 350
             ,editor: { xtype: 'textfield' }
-            ,sortable: false
         },tt,{
             header: _('rank')
             ,dataIndex: 'tv_rank'
             ,width: 100
             ,editor: { xtype: 'textfield' ,allowBlank: false }
-            ,sortable: true
+            ,fixed: true
         }]
-        ,tbar: ['->',{
+        ,tbar: [{
+            text: config.template
+        },{
+            text: _('back')
+            ,handler: function() {
+                var panel = Ext.getCmp('tvsorter-nav').panel;
+                panel.viewHome();
+            }
+        },'->',{
             xtype: 'modx-combo-category'
             ,name: 'filter_category'
             ,hiddenName: 'filter_category'
