@@ -8,9 +8,16 @@
  * @package tvsorter
  * @subpackage build
  */
+$c = $modx->newQuery('modAction');
+$c->sortby('id', 'DESC');
+$c->limit(1);
+/** @var modAction $last */
+$last = $modx->getObject('modAction', $c);
+$id = $last->get('id') + 1;
+
 $action = $modx->newObject('modAction');
 $action->fromArray(array(
-    //'id' => 1,
+    'id' => $id,
     'namespace' => 'tvsorter',
     'parent' => 0,
     'controller' => 'index',

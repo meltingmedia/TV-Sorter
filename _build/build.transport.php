@@ -36,7 +36,10 @@ require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 // Instantiate modX
 $modx = new modX();
 $modx->initialize('mgr');
-echo '<pre>'; // used for nice formatting of log messages
+if (!XPDO_CLI_MODE) {
+    // used for nice formatting of log messages
+    echo '<pre>';
+}
 $modx->setLogLevel(modX::LOG_LEVEL_INFO);
 $modx->setLogTarget('ECHO');
 
@@ -96,5 +99,5 @@ $builder->pack();
 $tend = explode(" ", microtime());
 $tend = $tend[1] + $tend[0];
 $totalTime = sprintf("%2.4f s", ($tend - $tstart));
-$modx->log(modX::LOG_LEVEL_INFO, "\n<br />Package Built.<br />\nExecution time: {$totalTime}\n");
+$modx->log(modX::LOG_LEVEL_INFO, "\n\nPackage Built. \nExecution time: {$totalTime}\n");
 exit ();
