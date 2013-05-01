@@ -13,8 +13,6 @@ You can do so on the TV grid (once you have selected a template) by double click
 You can also "de-activate" each TV (by clicking on the checkbox), and assign them back. Doing so will automatically
 give a 'rank' to each selected TV.
 
-You might need to do so for each newly created TV.
-
 ## License
 
 TVSorter is licensed under the MIT license.

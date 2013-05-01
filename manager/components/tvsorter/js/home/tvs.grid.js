@@ -14,7 +14,7 @@ MODx.grid.TemplateTV = function(config) {
         ,width: 120
         ,fixed: true
     });
-    Ext.applyIf(config,{
+    Ext.applyIf(config, {
         id: 'modx-grid-template-tv'
         ,url: TVSorter.config.connector_url
         ,fields: ['id','name','description','tv_rank','access','category_name','category']

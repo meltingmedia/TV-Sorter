@@ -12,7 +12,7 @@ set_time_limit(0);
 // define package names
 define('PKG_NAME', 'TVSorter');
 define('PKG_NAME_LOWER', strtolower(PKG_NAME));
-define('PKG_VERSION', '0.0.1');
+define('PKG_VERSION', '0.0.2');
 define('PKG_RELEASE', 'beta');
 
 // Define build paths
@@ -32,6 +32,7 @@ unset($root);
 // Override with your own defines here (see build.config.sample.php)
 require_once $sources['build'] . 'build.config.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
+require_once $sources['build'] . '/includes/helper.php';
 
 // Instantiate modX
 $modx = new modX();
@@ -47,6 +48,32 @@ $modx->loadClass('transport.modPackageBuilder', '', false, true);
 $builder = new modPackageBuilder($modx);
 $builder->createPackage(PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE);
 $builder->registerNamespace(PKG_NAME_LOWER, false, true, '{core_path}components/'. PKG_NAME_LOWER .'/');
+
+// add plugins
+$plugins = include $sources['data'].'transport.plugins.php';
+if (!is_array($plugins)) {
+    $modx->log(modX::LOG_LEVEL_FATAL, 'Adding plugins failed.');
+}
+$attributes = array(
+    xPDOTransport::UNIQUE_KEY => 'name',
+    xPDOTransport::PRESERVE_KEYS => false,
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::RELATED_OBJECTS => true,
+    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
+        'PluginEvents' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => false,
+            xPDOTransport::UNIQUE_KEY => array('pluginid', 'event'),
+        ),
+    ),
+);
+foreach ($plugins as $plugin) {
+    $vehicle = $builder->createVehicle($plugin, $attributes);
+    $builder->putVehicle($vehicle);
+}
+$modx->log(modX::LOG_LEVEL_INFO, 'Packaged in '.count($plugins).' plugins.');
+flush();
+unset($plugins, $plugin, $attributes);
 
 // Load menu
 $modx->log(modX::LOG_LEVEL_INFO, 'Packaging in menu...');
