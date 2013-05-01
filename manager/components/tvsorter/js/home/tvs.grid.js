@@ -121,7 +121,7 @@ MODx.grid.TemplateTV = function(config) {
     };
     MODx.grid.TemplateTV.superclass.constructor.call(this, config);
     this.on('render', this.prepareDrop, this);
-    this.on('afteredit', this.manageAccess, this);
+    this.on('afteredit', this.manageRank, this);
 
 
 };
@@ -195,9 +195,7 @@ Ext.extend(MODx.grid.TemplateTV, MODx.grid.Grid, {
     /**
      * Take care of TVs attached/removed to the template
      */
-    ,manageAccess: function(e) {
-        if (e.field != 'access') return false;
-
+    ,manageRank: function(e) {
         var store = e.grid.getStore();
         var record = e.record;
         var total = store.queryBy(function(rec, id) {
@@ -211,36 +209,51 @@ Ext.extend(MODx.grid.TemplateTV, MODx.grid.Grid, {
         });
         var currentIdx = store.indexOf(record);
 
-        if (e.value === true) {
-            // Record has been attached
-            if (actives.length > 0) {
-                var last = actives.last();
-                var to = store.indexOf(last);
-            } else if (total.length > 1) {
-                last = total.last();
-                to = store.indexOf(last);
-            }
-            record.set('tv_rank', actives.length);
-        } else {
-            // Record has been removed
-            if (inactives.length > 0) {
-                last = inactives.last();
-                to = store.indexOf(last) + 1;
-            } else if (total.length > 0) {
-                var first = total.first();
-                to = store.indexOf(first);
-            }
-            var rank = record.get('tv_rank');
-            record.set('tv_rank', '-');
+        if (e.field == 'access') {
+            if (e.value === true) {
+                // Record has been attached
+                if (actives.length > 0) {
+                    var last = actives.last();
+                    var to = store.indexOf(last);
+                } else if (total.length > 1) {
+                    last = total.last();
+                    to = store.indexOf(last);
+                }
+                record.set('tv_rank', actives.length);
+            } else {
+                // Record has been removed
+                if (inactives.length > 0) {
+                    last = inactives.last();
+                    to = store.indexOf(last) + 1;
+                } else if (total.length > 0) {
+                    var first = total.first();
+                    to = store.indexOf(first);
+                }
+                var rank = record.get('tv_rank');
+                record.set('tv_rank', '-');
 
-            // Decrement the tv_rank for impacted TVs
-            var impacted = store.queryBy(function(rec, id) {
-                return (rec.get('tv_rank') > rank && rec.get('category_name') == record.get('category_name'));
-            });
-            impacted.each(function(rec, idx, list) {
-                rec.set('tv_rank', (rec.get('tv_rank') - 1));
-            });
+                // Decrement the tv_rank for impacted TVs
+                var impacted = store.queryBy(function(rec, id) {
+                    return (rec.get('tv_rank') > rank && rec.get('category_name') == record.get('category_name'));
+                });
+                impacted.each(function(rec, idx, list) {
+                    rec.set('tv_rank', (rec.get('tv_rank') - 1));
+                });
+            }
         }
+
+//        if (e.field == 'tv_rank') {
+//            to = e.value;
+//            if (to == '-') {
+//                if (inactives.length > 0) {
+//                    last = inactives.last();
+//                    to = store.indexOf(last) + 1;
+//                } else if (total.length > 0) {
+//                    first = total.first();
+//                    to = store.indexOf(first);
+//                }
+//            }
+//        }
 
         if (to && to != currentIdx) {
             store.removeAt(currentIdx);
