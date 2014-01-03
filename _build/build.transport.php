@@ -24,7 +24,8 @@ $sources = array(
     'resolvers' => $root . '_build/resolvers/',
     'lexicon' => $root . 'core/components/'. PKG_NAME_LOWER .'/lexicon/',
     'docs' => $root . 'core/components/'. PKG_NAME_LOWER .'/docs/',
-    'source_assets' => $root . 'manager/components/'. PKG_NAME_LOWER,
+
+    'source_assets' => $root . 'manager/assets/components/'. PKG_NAME_LOWER,
     'source_core' => $root . 'core/components/'. PKG_NAME_LOWER,
 );
 unset($root);
