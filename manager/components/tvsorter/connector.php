@@ -1,17 +1,31 @@
 <?php
+// Dev config
+$config = dirname(dirname(dirname(dirname(__FILE__)))) . '/config.core.php';
+if (!file_exists($config)) {
+    // Manager config
+    $config = dirname(dirname(dirname(__FILE__))) . '/config.core.php';
+}
+require_once $config;
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/config.core.php';
-require_once MODX_CORE_PATH.'config/'. MODX_CONFIG_KEY .'.inc.php';
-require_once MODX_CONNECTORS_PATH . 'index.php';
+require_once MODX_CORE_PATH .'config/'. MODX_CONFIG_KEY .'.inc.php';
+require_once MODX_CONNECTORS_PATH .'index.php';
+
+/**
+ * At this stage, the following should be available
+ *
+ * @var modX $modx A modX instance
+ * @var string $ctx The context key
+ * @var string $ml The manager language
+ * @var string $connectorRequestClass The connector request class name used to handle the current request
+ */
 
 $corePath = $modx->getOption('tvsorter.core_path', null, $modx->getOption('core_path') . 'components/tvsorter/');
-require_once $corePath . 'model/tvsorter/tvsorter.class.php';
-$modx->tvsorter = new TVSorter($modx);
+/** @var TVSorter $sorter */
+$sorter = $modx->getService('tvsorter', 'services.TVsorter', $corePath);
 
-// handle request
-$path = $modx->getOption('processors_path', $modx->tvsorter->config, $corePath . 'processors/');
-$location = $modx->context->get('key') == 'mgr' ? 'mgr' : '';
+// Handle request
+$path = $modx->getOption('processors_path', $sorter->config, $corePath . 'processors/');
 $modx->request->handleRequest(array(
     'processors_path' => $path,
-    'location' => $location,
+    'location' => '',
 ));

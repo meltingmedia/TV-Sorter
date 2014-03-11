@@ -1,6 +1,8 @@
 <?php
-
-class TVSorterMgrHomeManagerController extends TVSorterManagerController
+if (!class_exists('TVSorterManagerController')) {
+    require_once dirname(dirname(dirname(__FILE__))) . '/index.class.php';
+}
+class TVSorterWelcomeManagerController extends TVSorterManagerController
 {
 
     public function getPageTitle()
@@ -14,15 +16,24 @@ class TVSorterMgrHomeManagerController extends TVSorterManagerController
         $this->addJavascript($this->jsURL . 'home/templates.grid.js');
         $this->addJavascript($this->jsURL . 'home/home.panel.js');
 
-        $this->addHtml('<script type="text/javascript">
-            Ext.onReady(function() {
-                MODx.add("tvsorter-panel-home");
-            });
-        </script>');
+        $this->addHtml(
+<<<HTML
+<script type="text/javascript">
+    Ext.onReady(function() {
+        MODx.add('tvsorter-panel-home');
+    });
+</script>
+HTML
+        );
     }
 
     public function getLanguageTopics()
     {
         return array('tvsorter:default', 'template', 'tv');
     }
+}
+
+class TVSorterDefaultWelcomeManagerController extends TVSorterWelcomeManagerController
+{
+
 }

@@ -1,15 +1,12 @@
 <?php
 /**
- * TVSorter build script
- *
- * @package tvsorter
- * @subpackage build
+ * TVSorter package builder script
  */
 $tstart = explode(' ', microtime());
 $tstart = $tstart[1] + $tstart[0];
 set_time_limit(0);
 
-// define package names
+// Define package names
 define('PKG_NAME', 'TVSorter');
 define('PKG_NAME_LOWER', strtolower(PKG_NAME));
 define('PKG_VERSION', '0.0.2');
@@ -25,7 +22,7 @@ $sources = array(
     'lexicon' => $root . 'core/components/'. PKG_NAME_LOWER .'/lexicon/',
     'docs' => $root . 'core/components/'. PKG_NAME_LOWER .'/docs/',
 
-    'source_assets' => $root . 'manager/assets/components/'. PKG_NAME_LOWER,
+    'source_assets' => $root . 'manager/components/'. PKG_NAME_LOWER,
     'source_core' => $root . 'core/components/'. PKG_NAME_LOWER,
 );
 unset($root);
@@ -79,7 +76,9 @@ unset($plugins, $plugin, $attributes);
 // Load menu
 $modx->log(modX::LOG_LEVEL_INFO, 'Packaging in menu...');
 $menu = include $sources['data'] . 'transport.menu.php';
-if (empty($menu)) $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu.');
+if (empty($menu)) {
+    $modx->log(modX::LOG_LEVEL_ERROR, 'Could not package in menu.');
+}
 $vehicle = $builder->createVehicle($menu, array (
     xPDOTransport::PRESERVE_KEYS => true,
     xPDOTransport::UPDATE_OBJECT => true,
@@ -96,7 +95,7 @@ $vehicle = $builder->createVehicle($menu, array (
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding file resolvers...');
 $vehicle->resolve('file', array(
     'source' => $sources['source_assets'],
-    'target' => "return MODX_MANAGER_PATH . 'components/';",
+    'target' => "return MODX_MANAGER_PATH . 'assets/components/';",
 ));
 $vehicle->resolve('file', array(
     'source' => $sources['source_core'],
