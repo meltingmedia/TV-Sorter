@@ -1,4 +1,5 @@
 <?php
+
 if (!class_exists('TVSorterManagerController')) {
     require_once dirname(dirname(dirname(__FILE__))) . '/index.class.php';
 }

@@ -1,6 +1,6 @@
 <?php
 
-class ListTVs extends modProcessor
+class TVGetList extends modProcessor
 {
     public function process()
     {
@@ -21,7 +21,7 @@ class ListTVs extends modProcessor
         $search = $this->getProperty('search');
 
         if ($template > 0) {
-            /** @var modTemplate $templateObj */
+            /** @var \modTemplate $templateObj */
             $templateObj = $this->modx->getObject('modTemplate', $template);
         } else {
             $templateObj = $this->modx->newObject('modTemplate');
@@ -52,7 +52,7 @@ class ListTVs extends modProcessor
 
         /* iterate through tvs */
         $list = array();
-        /** @var modTemplateVar $tv */
+        /** @var \modTemplateVar $tv */
         foreach ($tvs as $tv) {
             $tvArray = $tv->get(array('id','name','description','tv_rank','category_name'));
             $tvArray['access'] = (boolean) $tv->get('access');
@@ -68,4 +68,4 @@ class ListTVs extends modProcessor
 
 }
 
-return 'ListTVs';
+return 'TVGetList';

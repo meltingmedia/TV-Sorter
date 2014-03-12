@@ -6,7 +6,9 @@
  * @var modX $modx
  */
 
-if ($modx->context->get('key') != 'mgr') return '';
+if ($modx->context->get('key') != 'mgr') {
+    return;
+}
 $params = $modx->event->params;
 /** @var modTemplateVar $tv */
 $tv =& $params['tv'];
@@ -58,4 +60,4 @@ switch ($modx->event->name) {
         break;
 }
 
-return '';
+return;

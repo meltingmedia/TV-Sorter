@@ -1,6 +1,6 @@
 <?php
 
-class ListTemplates extends modObjectGetListProcessor
+class TemplateGetList extends modObjectGetListProcessor
 {
     public $classKey = 'modTemplate';
     public $languageTopics = array('tvsorter:default');
@@ -48,4 +48,4 @@ class ListTemplates extends modObjectGetListProcessor
     }
 }
 
-return 'ListTemplates';
+return 'TemplateGetList';
