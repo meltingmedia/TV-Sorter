@@ -19,7 +19,7 @@ class TVSorterWelcomeManagerController extends TVSorterManagerController
 
         $this->addHtml(
 <<<HTML
-<script type="text/javascript">
+<script>
     Ext.onReady(function() {
         MODx.add('tvsorter-panel-home');
     });

@@ -47,28 +47,8 @@ class TVSorter
             'connector_url' => $managerUrl . 'connector.php',
             'mgr_js_url' => $managerUrl . 'js/',
             'mgr_css_url' => $managerUrl . 'css/',
-
-            'debug' => $this->modx->getOption("{$prefix}.debug", null, false),
-            'debug_user' => null,
-            'debug_user_id' => null,
         ), $config);
 
         $this->modx->lexicon->load('tvsorter:default');
-        if ($this->modx->getOption('debug', $this->config)) {
-            $this->initDebug();
-        }
-    }
-
-    /**
-     * Initialize the debug properties, to get more verbose errors
-     *
-     * @return void
-     */
-    private function initDebug()
-    {
-        error_reporting(E_ALL);
-        ini_set('display_errors', true);
-        //$this->modx->setLogTarget('FILE');
-        $this->modx->setLogLevel(modX::LOG_LEVEL_INFO);
     }
 }

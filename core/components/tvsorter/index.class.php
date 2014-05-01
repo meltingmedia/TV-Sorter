@@ -28,7 +28,11 @@ abstract class TVSorterManagerController extends modExtraManagerController
     public function initialize()
     {
         if (!property_exists($this->modx, 'tvsorter')) {
-            $path = $this->modx->getOption('tvsorter.core_path', null, $this->modx->getOption('core_path') . 'components/tvsorter/');
+            $path = $this->modx->getOption(
+                'tvsorter.core_path',
+                null,
+                $this->modx->getOption('core_path') . 'components/tvsorter/'
+            );
             $this->modx->getService('tvsorter', 'services.TVSorter', $path);
         }
         $this->tvsorter =& $this->modx->tvsorter;
@@ -49,7 +53,7 @@ abstract class TVSorterManagerController extends modExtraManagerController
 
         $this->addHtml(
 <<<HTML
-<script type="text/javascript">
+<script>
     Ext.ns("TVSorter");
     Ext.onReady(function() {
         TVSorter.config = {$this->modx->toJSON($this->tvsorter->config)};
